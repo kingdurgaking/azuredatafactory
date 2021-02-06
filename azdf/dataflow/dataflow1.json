@@ -12,13 +12,17 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
-			"transformations": [
+			"sinks": [
 				{
-					"name": "CalculatedColumn"
+					"name": "sink1"
 				}
 			],
-			"script": "source(output(\n\t\t{S.No} as string,\n\t\tName as string,\n\t\tValue as integer,\n\t\tratio as float\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tpurgeFiles: true) ~> source1\nsource1 derive(calculated = Value*ratio) ~> CalculatedColumn"
+			"transformations": [
+				{
+					"name": "inserttodb"
+				}
+			],
+			"script": "parameters{\n\tparameter1 as string\n}\nsource(output(\n\t\t{S.No} as string,\n\t\tName as string,\n\t\tValue as integer,\n\t\tratio as float\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tpurgeFiles: true) ~> source1\nsource1 derive(calculated = Value*ratio) ~> inserttodb\ninserttodb sink(skipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
